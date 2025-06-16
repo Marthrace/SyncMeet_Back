@@ -1,21 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h1>Welcome Back</h1>
+    <form id="loginForm">
+      <input type="text" id="username" name="username" placeholder="Username" required>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/req/signup">Sign Up</a></p>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('/req/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        localStorage.setItem('token', result.token); // Save JWT
+        alert("Login successful! Redirecting...");
+        window.location.href = "/index"; // Or wherever your home page is
+      } else {
+        alert("Login failed. Check credentials.");
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="auth-container">
         <h1>Welcome Back</h1>
-        <form id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginPassword" placeholder="Password" required>
+        <form action="/login" method="post">
+            <input type="text" name="username" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
-        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        <p>Don't have an account? <a href="/req/signup">Sign Up</a></p>
     </div>
-    <script src="js/auth.js"></script>
+    <script src="/js/auth.js"></script>
 </body>
 </html>
+-->

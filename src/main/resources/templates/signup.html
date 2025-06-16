@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <div class="auth-container">
@@ -14,36 +14,39 @@
       <input type="email" id="email" placeholder="Email" required>
       <input type="password" id="password" placeholder="Password" required>
       <input type="password" id="passwordcon" placeholder="Confirm Password" required>
-      <button type="button" id="submit">Sign Up</button>
+      <button type="submit">Sign Up</button>
     </form>
-    <p>Already have an account? <a href="login.html">Login</a></p>
+    <p>Already have an account? <a href="/req/login">Login</a></p>
   </div>
 
   <script>
-    const submitButton = document.getElementById("submit");
-    submitButton.addEventListener('click', () => {
+    
+    document.getElementById("signupForm").addEventListener('submit', async (e) => {
+      e.preventDefault();
+
       const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('passwordcon').value;
-      const email = document.getElementById('email').value;
 
-      const data = {
-        username,
-        password,
-        email
-      };
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
 
-      if (password == confirmPassword) {
-        const jsonData = JSON.stringify(data);
-        fetch('/req/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: jsonData
-        }).then(response => {
-          // Response handling can be added here
-        });
+      const response = await fetch('/req/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      if (response.ok) {
+        alert("Account created successfully! Redirecting to login...");
+        window.location.href = "/req/login";
+      } else {
+        alert("Signup failed. Try again.");
       }
     });
   </script>
