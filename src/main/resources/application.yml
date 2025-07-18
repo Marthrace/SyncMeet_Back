@@ -34,9 +34,9 @@ server:
     include-binding-errors: always
 
 
-agora:
-  app-id: 4d4a26e7f612410abbb6079c8b63cd6d
-  app-certificate: 86c7a98c1bb8462a9eb8728d7be3724d
 
+agora:
+  app-id: 4d4a26e7f612410abbb6079c8b63cd6d 
+  app-certificate: 86c7a98c1bb8462a9eb8728d7be3724d
 
 
