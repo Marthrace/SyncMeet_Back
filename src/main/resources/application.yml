@@ -16,7 +16,27 @@ spring:
         format_sql: true
     show-sql: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: syncmeetappteam@gmail.com
+    password: Syncmeet123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   error:
     include-message: always
     include-binding-errors: always
+
+
+agora:
+  app-id: 4d4a26e7f612410abbb6079c8b63cd6d
+  app-certificate: 86c7a98c1bb8462a9eb8728d7be3724d
+
+
+

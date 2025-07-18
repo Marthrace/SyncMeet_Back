@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsServiceImp userDetailsService; // replace MyAppUserService
+    private final UserDetailsServiceImp userDetailsService;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -50,7 +50,31 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/req/login", "/req/signup", "/api/auth/**", "/css/**", "/js/**").permitAll();
+                   registry.requestMatchers(
+                        "/req/login", 
+                        "/req/signup", 
+                        "/api/auth/**",
+                        "/api/meetings/my/**",
+                        "/api/meetings/**",
+                        "/api/meetings/join/**",
+
+                        // ✅ WebSocket & SockJS
+                        "/ws/**",
+                        "/topic/**",
+                        "/app/**",
+                        "/chat.html",
+
+                        "api/agora/token/**",
+
+                        // ✅ Static
+                        "/css/**",
+                        "/js/**",
+                        "/webjars/**"
+                    ).permitAll();
+
+                    
+
+
                     registry.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session

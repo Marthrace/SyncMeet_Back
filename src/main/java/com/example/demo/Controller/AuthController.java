@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,11 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.AppUser;
 import com.example.demo.model.AuthenticationResponse;
+import com.example.demo.model.LoginRequest;
 import com.example.demo.model.RegisterRequest;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
+import com.example.demo.service.PasswordResetService;
 
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequestMapping("/req")
@@ -40,8 +45,8 @@ public class AuthController {
 
         return new AuthenticationResponse(token);
     }
-    @PostMapping("/authenticate")
-public AuthenticationResponse authenticate(@RequestBody RegisterRequest request) {
+    @PostMapping("/login")
+public AuthenticationResponse authenticate(@RequestBody LoginRequest request) {
     System.out.println("🔐 Attempting login for: " + request.getUsername());
 
     AppUser user = userRepository.findByUsername(request.getUsername())
@@ -64,18 +69,35 @@ public AuthenticationResponse authenticate(@RequestBody RegisterRequest request)
     return new AuthenticationResponse(token);
 }
 
-    /* 
-    @PostMapping("/authenticate")
-    public AuthenticationResponse authenticate(@RequestBody RegisterRequest request) {
-        AppUser user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+    @Autowired
+    private PasswordResetService passwordResetService;
+    @PostMapping("/forgot-password")
+public ResponseEntity<?> forgotPassword(@RequestBody java.util.Map<String, String> body) {
+    String email = body.get("email");
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
-        }
+    try {
+        passwordResetService.initiateReset(email);
+    } catch (RuntimeException e) {
+        // Don't reveal whether user exists
+        System.out.println("📨 Password reset attempted for: " + email + " | " + e.getMessage());
+    }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+    return ResponseEntity.ok("If the email is registered, a reset link has been sent.");
+}
 
-        return new AuthenticationResponse(token);
-    }*/
+    @PostMapping("/reset-password")
+public ResponseEntity<?> resetPassword(@RequestBody java.util.Map<String, String> body) {
+    String token = body.get("token");
+    String newPassword = body.get("newPassword");
+
+    try {
+        passwordResetService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password reset successful.");
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body("Reset failed: " + e.getMessage());
+    }
+}
+
+
+    
 }

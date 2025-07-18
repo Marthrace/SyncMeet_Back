@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Chat</title>
+</head>
+<body>
+  <h2>WebSocket Chat</h2>
+
+  <!-- Sender and Message Input -->
+  <input id="sender" type="text" placeholder="Enter your name" />
+  <input id="message" type="text" placeholder="Enter message" />
+  <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+
+  <!-- Typing Indicator -->
+  <p id="typingIndicator" style="font-style: italic; color: gray;"></p>
+
+  <!-- Message List -->
+  <ul id="messages"></ul>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script>
+    const socket = new SockJS('/ws');
+    const stomp = Stomp.over(socket);
+
+    stomp.connect({}, () => {
+      console.log("✅ Connected to STOMP");
+      document.getElementById("sendBtn").disabled = false;
+
+      // Receive chat messages
+      stomp.subscribe('/topic/messages', msg => {
+        const message = JSON.parse(msg.body);
+        document.getElementById('messages').innerHTML +=
+          `<li>[${message.timestamp}] <strong>${message.sender}</strong>: ${message.content}</li>`;
+      });
+
+      // Receive typing notification
+      stomp.subscribe('/topic/typing', msg => {
+        const user = msg.body;
+        const indicator = document.getElementById("typingIndicator");
+        indicator.textContent = `${user} is typing...`;
+
+        // Clear after 2 seconds
+        clearTimeout(window.typingTimeout);
+        window.typingTimeout = setTimeout(() => {
+          indicator.textContent = "";
+        }, 2000);
+      });
+    });
+
+    function sendMessage() {
+      const sender = document.getElementById('sender').value || "Anonymous";
+      const content = document.getElementById('message').value;
+      const message = { sender, content };
+
+      if (stomp.connected && content.trim()) {
+        stomp.send("/app/chat", {}, JSON.stringify(message));
+        document.getElementById('message').value = ""; // Clear message box
+      }
+    }
+
+    // Detect typing input
+    document.getElementById("message").addEventListener("input", () => {
+      const sender = document.getElementById("sender").value || "Anonymous";
+      if (stomp.connected) {
+        stomp.send("/app/typing", {}, sender);
+      }
+    });
+  </script>
+</body>
+</html>

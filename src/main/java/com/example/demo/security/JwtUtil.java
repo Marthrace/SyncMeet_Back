@@ -8,12 +8,23 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtUtil {
 
     private final String SECRET = "your-secret-key";
     private final long EXPIRATION_TIME = 86400000; // 1 day
+
+    public String extractUsernameFromRequest(HttpServletRequest request) {
+    String authHeader = request.getHeader("Authorization");
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        String token = authHeader.substring(7);
+        return extractUsername(token);
+    }
+    return null;
+}
+
 
     // ✅ Existing method (keep this)
     public String generateToken(String username) {
