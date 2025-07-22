@@ -22,10 +22,10 @@ public class PasswordResetService {
     private PasswordResetTokenRepository tokenRepository;
 
     @Autowired
-    private EmailService emailService; // You already use this in invitation
+    private EmailService emailService;
 
     public void initiateReset(String email) {
-        AppUser user = userRepository.findByUsername(email)
+        AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = UUID.randomUUID().toString();
@@ -39,7 +39,6 @@ public class PasswordResetService {
 
         String resetLink = "http://localhost:8080/req/reset-password?token=" + token;
         emailService.sendPasswordResetEmail(email, resetLink);
- // You can rename this method to something like sendPasswordResetEmail()
     }
 
     public void resetPassword(String token, String newPassword) {
@@ -54,6 +53,6 @@ public class PasswordResetService {
         user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
         userRepository.save(user);
 
-        tokenRepository.delete(resetToken); // remove used token
+        tokenRepository.delete(resetToken);
     }
 }

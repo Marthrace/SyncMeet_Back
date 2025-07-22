@@ -53,10 +53,13 @@ public class SecurityConfig {
                    registry.requestMatchers(
                         "/req/login", 
                         "/req/signup", 
+                        "/req/forgot-password",   // <-- Add this
+                        "/req/reset-password",  
                         "/api/auth/**",
                         "/api/meetings/my/**",
                         "/api/meetings/**",
                         "/api/meetings/join/**",
+                        "/api/participants/**",
 
                         // ✅ WebSocket & SockJS
                         "/ws/**",
