@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: syncmeet-db
+    environment:
+      POSTGRES_DB: syncmeet
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - syncmeet-network
+
+  app:
+    build: .
+    container_name: syncmeet-app
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/syncmeet
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - syncmeet-network
+
+volumes:
+  postgres_data:
+
+networks:
+  syncmeet-network:

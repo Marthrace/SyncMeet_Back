@@ -3,13 +3,13 @@ spring:
     name: demo
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/amigoscode
-    username: amigoscode
-    password: password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/amigoscode}
+    username: ${SPRING_DATASOURCE_USERNAME:amigoscode}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
 
   jpa:
     hibernate:
-      ddl-auto: create   # <== updated here
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -33,10 +33,50 @@ server:
     include-message: always
     include-binding-errors: always
 
-
-
 agora:
-  app-id: 4d4a26e7f612410abbb6079c8b63cd6d 
+  app-id: 4d4a26e7f612410abbb6079c8b63cd6d
   app-certificate: 86c7a98c1bb8462a9eb8728d7be3724d
 
+
+
+#spring:
+ # application:
+  #  name: demo
+
+  #datasource:
+   # url: jdbc:postgresql://localhost:5432/amigoscode
+    #username: amigoscode
+    #password: password
+
+  #jpa:
+   # hibernate:
+    #  ddl-auto: create   # <== updated here
+    #properties:
+     # hibernate:
+      #  dialect: org.hibernate.dialect.PostgreSQLDialect
+       # format_sql: true
+    #show-sql: true
+
+  #mail:
+   # host: smtp.gmail.com
+    #port: 587
+    #username: syncmeetappteam@gmail.com
+    #password: xlgpuskngexzovlf
+    #properties:
+     # mail:
+      #  smtp:
+       #   auth: true
+        #  starttls:
+         #   enable: true
+
+#server:
+ # error:
+  #  include-message: always
+    #include-binding-errors: always
+
+
+
+#agora:
+ # app-id: 4d4a26e7f612410abbb6079c8b63cd6d 
+  #app-certificate: 86c7a98c1bb8462a9eb8728d7be3724d
 

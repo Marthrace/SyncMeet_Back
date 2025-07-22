@@ -1,0 +1,9 @@
+# Ignore everything inside target except the built JAR
+target/*
+!target/*.jar
+
+.git
+.gitignore
+mvnw
+mvnw.cmd
+README.md
